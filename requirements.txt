@@ -1,0 +1,13 @@
+pytube
+opencv-python
+youtube_transcript_api
+tqdm
+pymongo
+beautifulsoup4
+youtube-dl
+dlib
+face_recognition
+IPython
+yoloface
+git+https://github.com/pishiko/pytube.git@42a7d8322dd7749a9e950baf6860d115bbeaedfc
+https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz

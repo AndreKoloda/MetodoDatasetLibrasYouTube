@@ -1,7 +1,7 @@
 from database_connection import MongoDB
 from json_converter import from_dict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from constants import MAX_WORKERS, ID_FRAME_SEPARATOR, WINDOWS
+from constants import MAX_WORKERS, ID_FRAME_SEPARATOR, MIN_FR_DETECTIONS, MIN_YOLO_DETECTIONS, WINDOWS
 import logging
 import datetime
 
@@ -327,7 +327,7 @@ class ChannelDB:
             count_right_face_positive  =  len(list(filter(lambda x: x['bottom_side'] == "bottom_right" , face_positive)))
 
     
-            if (count_right_yolo_positive > 0) or (count_right_face_positive > 0):
+            if (count_right_yolo_positive >= MIN_YOLO_DETECTIONS) or (count_right_face_positive >= MIN_FR_DETECTIONS):
                 self.videos_id_download.append(video['video_id'])
 
         except Exception as e:

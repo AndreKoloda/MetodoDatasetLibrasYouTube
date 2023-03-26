@@ -7,12 +7,10 @@ class YoloFace:
                                     #  only first time.
                                     #  Automatically  create folder .yoloface on cwd.
 
-    def recognize(self, img_path):
+    def detect(self, img_path):
         img,box,conf = self.face.face_detection(image_path=img_path,model='tiny')
         return (len(box) > 0) and (conf[0] > CONF_YOLO)
 
 
 if __name__ == '__main__':
-    yf = YoloFace()
-    print(yf.recognize("images/house.jpg"))
-    print(yf.recognize("images/interpreter=1.png"))
+    pass

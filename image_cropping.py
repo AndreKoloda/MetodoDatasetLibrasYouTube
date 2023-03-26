@@ -1,4 +1,3 @@
-# pip install opencv-python
 import cv2
 import os
 from copy import copy
@@ -55,81 +54,31 @@ class CroppingGenerator:
         self.input_directory = input_directory
         self.output_directory = output_directory 
 
-    def generate_bottom_corners_croppings(self, height_percent, width_percent):
+    def generate_bottom_corner_croppings(self, side, height_percent, width_percent):
         os.makedirs(self.output_directory, exist_ok=True)
 
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            tasks = {executor.submit(self._generate_bottom_corners_croppings, filename, height_percent, width_percent): filename for filename in os.listdir(self.input_directory)}
+            tasks = {executor.submit(self._generate_bottom_corner_croppings, side, filename, height_percent, width_percent): filename for filename in os.listdir(self.input_directory)}
         
             for task in as_completed(tasks):
                 print(task)
 
-    def _generate_bottom_corners_croppings(self, filename, height_percent, width_percent):
+    def _generate_bottom_corner_croppings(self, side, filename, height_percent, width_percent):
         img = Image(os.path.join(self.input_directory, filename))
 
-        p1 = (0, int(img._height*(1-height_percent)))
-        p2 = (int(img._width*width_percent), img._height)
-        bottom_left = ImageCropping(img, p1, p2)
+        if side == BOTTOM_RIGHT:
+            p1 = (int(img._width*(1-width_percent)), int(img._height*(1-height_percent)))
+            p2 = (img._width, img._height)
+            bottom_corner = ImageCropping(img, p1, p2)
+        else:
+            p1 = (0, int(img._height*(1-height_percent)))
+            p2 = (int(img._width*width_percent), img._height)
+            bottom_corner = ImageCropping(img, p1, p2)
+            
 
-        p1 = (int(img._width*(1-width_percent)), int(img._height*(1-height_percent)))
-        p2 = (img._width, img._height)
-        bottom_right = ImageCropping(img, p1, p2)
-
-        bottom_left_path = os.path.join(self.output_directory, BOTTOM_LEFT)
-        bottom_right_path = os.path.join(self.output_directory, BOTTOM_RIGHT)
-
-        bottom_left.save(bottom_left_path)
-        bottom_right.save(bottom_right_path)
+        path = os.path.join(self.output_directory, side)
+        bottom_corner.save(path)
 
 
 if __name__ == '__main__':
-    from constants import FRAMES_PATH, CROPPED_IMGS_PATH
-    img = Image(f'{FRAMES_PATH}/6W3EPytK7aM=1.jpg')
-    # p1 = (0, 400)
-    # p2 = (500, img._height)
-
-    # bottom_left = ImageCropping(img, p1, p2) 
-    # bottom_left.show()
-
-    # p3 = (650, 200)
-    # p4 = (700, 250)
-
-    # square = ImageCropping(bottom_left, p3, p4)
-    # square.show()
-
-    # print(square.is_contained(bottom_left))
-
-    # p5 = (200, 450)
-    # p6 = (250, 500)
-    # square2 = ImageCropping(bottom_left, p5, p6)
-    # square2.show()
-    # print(square2.is_contained(bottom_left))
-
-    #img.save('test')
-
-    # Testar as porcentagens para definir os cantos inferiores
-    # height_percent = 0.54
-    # width_percent = 0.3
-
-    # p1 = (0, int(img._height*(1-height_percent)))
-    # p2 = (int(img._width*width_percent), img._height)
-    # # bottom_left = ImageCropping(img, p1, p2)
-
-    # p1 = (int(img._width*(1-width_percent)), int(img._height*(1-height_percent)))
-    # p2 = (img._width, img._height)
-    # bottom_right = ImageCropping(bottom_left, p1, p2)
-
-    # ibase = _ImageBase()
-
-    # bottom_right.show()
-    # bottom_right.save()
-    # img.show()
-    # img.save('ztest')
-
-    # img2 = ImageCropping(img, p1, p2)
-    # img2.show()
-    # img2.show_in_parent()
-    # img2.save('ztest')
-
-    cg = CroppingGenerator(FRAMES_PATH, CROPPED_IMGS_PATH)
-    cg.generate_bottom_corners_croppings(0.55, 0.3)
+    pass

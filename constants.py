@@ -76,26 +76,25 @@ BOTTOM_RIGHT = 'bottom_right'
 SUBTITLES_PATH = BASE_PATH + '/subtitles'
 VIDEOS_PATH = BASE_PATH + '/videos'
 
-VIDEO_IDS_FILENAME = "video_ids.txt"
-PROCESSED_IMAGES_FILENAME = 'processed_images.csv'
-PROCESSED_IMAGES_YOLO_FILENAME = 'yolo_processed_images.csv'
-SUBTITLES_FILENAME = 'subtitles.csv'
-
 ID_FRAME_SEPARATOR = "="
 
 GENERATED = 'generated'
 MANUALLY_CREATED = 'manually_created'
 
+MIN_FR_DETECTIONS = 1
+MIN_YOLO_DETECTIONS = 1
+
 MAX_WORKERS = 13
 SLICE_SIZE = 30
 
-CONF_YOLO = 0.97
+CONF_YOLO = 0.98
 
 WINDOWS = 'Windows'
 
 X = 0
 Y = 1
 
-# Positions on csv rows
+# indexes ( name = ID + ID_FRAME_SEPARATOR + FRAME )
 ID = 0
 FRAME = 1
+

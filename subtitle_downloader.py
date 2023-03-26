@@ -1,10 +1,3 @@
-# https://www.3playmedia.com/blog/captions-vs-subtitles-do-you-know-the-difference/
-#  . Captions: voltadas para o público surdo, não transcrevem apenas a fala, mas outros elementos importantes para o entendimento 
-#  . Subtitles: objetivam a tradução do conteúdo, e apenas transcrevem a fala
-#    
-# https://github.com/jdepoix/youtube-transcript-api
-# https://pypi.org/project/youtube-transcript-api/
-# pip install youtube_transcript_api
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled, NoTranscriptAvailable
 from youtube_transcript_api.formatters import JSONFormatter, SRTFormatter
 from channel import Channel
@@ -12,7 +5,6 @@ from video import Video
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from constants import MAX_WORKERS, GENERATED, MANUALLY_CREATED, SLICE_SIZE
 from tqdm import tqdm
-import csv_writer
 import os
 
 
@@ -44,7 +36,7 @@ class SubtitleDownloader:
     def filter_only_having_transcripts(self, channel_id):
         vid_ids = Channel(channel_id).get_videos_ids()
         filtered_videos = vid_ids.copy()
-        print("Filtering transcripts...")
+        print("\nFiltering transcripts...")
 
         slices = [(vid_ids[i:i+SLICE_SIZE]) for i in range(0, len(vid_ids), SLICE_SIZE)]
         pbar = tqdm(total=len(vid_ids))
@@ -133,9 +125,4 @@ class SubtitleDownloader:
 
 
 if __name__ == '__main__':
-    # from constants import SUBTITLES_PATH
-   
-    # ids = ['7AAplpv7DKM', 'tHiUguccA_Q', 'CME_VC04nwk', 'aaaaaaaaaaaaaa', 'kQ-qHB27JwY', 'GQpQha2Mfpg']
-    # sd = SubtitleDownloader(['pt-BR', 'pt'], SUBTITLES_PATH)
-    # sd.download(ids)
     pass

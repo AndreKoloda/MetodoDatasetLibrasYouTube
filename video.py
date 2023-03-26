@@ -1,4 +1,5 @@
 from recognition import RecognitionInterpreter
+
 class Video:
     def __init__(self, video_id):
         self.video_id = video_id

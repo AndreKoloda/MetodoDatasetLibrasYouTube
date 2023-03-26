@@ -1,6 +1,5 @@
 from pytube import Channel
 from channel import Channel as chn
-from csv_writer import write_video_ids
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pytube.exceptions import PytubeError
 from constants import MAX_WORKERS
@@ -28,7 +27,6 @@ def _get_video_ids(channel_id):
         videos_id = [link.replace('https://www.youtube.com/watch?v=', '') for link in channel.video_urls]
         channel_obj.persist_videos_in_channel(videos_id)
         
-        # write_video_ids(channel.video_urls)
     except PytubeError as err:
         print(err)
         get_video_url(channel_url)

@@ -4,16 +4,15 @@ from videos_download_persistence import VideosResultsDB
 from partial_downloader import PartialDownloader
 from subtitle_downloader import SubtitleDownloader
 from video_downloader import VideoDownloader
-from facial_recognition import FaceRecognition
+from face_detection import FaceDetection
 from video_id_generator import get_video_ids
 from image_cropping import CroppingGenerator
 from shutil import make_archive
 from constants import *
-import csv
 import time
 import os
 import shutil
-# from id_generator import get_ids_from_channel, sort_ids_obtained_from_channel, get_video_ids_from_playlist
+
 
 if __name__ == '__main__':
     subtitle_downloader = SubtitleDownloader(['pt-BR', 'pt'], SUBTITLES_PATH)
@@ -35,27 +34,28 @@ if __name__ == '__main__':
         partial_downloader.get_frames() # captura de frame do fragmento de video
 
         cropping_generator = CroppingGenerator(FRAMES_PATH, CROPPED_IMGS_PATH) # caminho de entrada e de saída dos recortes
-        cropping_generator.generate_bottom_corners_croppings(0.55, 0.3) # porcentagem da altura e da largura da imagem para definir o tamanho dos recortes
+        cropping_generator.generate_bottom_corner_croppings(BOTTOM_RIGHT, 0.55, 0.3) # porcentagem da altura e da largura da imagem para definir o tamanho dos recortes
+        cropping_generator.generate_bottom_corner_croppings(BOTTOM_LEFT, 0.55, 0.3) # canto inferior esquerdo
 
-        face_recognition = FaceRecognition(channel_id, f"{CROPPED_IMGS_PATH}/{BOTTOM_RIGHT}") # primeiro, processa os recortes dos cantos inferiores direitos
+        face_detection = FaceDetection(channel_id, f"{CROPPED_IMGS_PATH}/{BOTTOM_RIGHT}") # primeiro, processa os recortes dos cantos inferiores direitos
         processed_imgs_path = f"{PROCESSED_IMAGES_PATH}/{BOTTOM_RIGHT}"
-        face_recognition.recognize(BOTTOM_RIGHT, processed_imgs_path)
+        face_detection.detect(BOTTOM_RIGHT, processed_imgs_path)
         
-        #face_recognition.set_images_directory(f"{PROCESSED_IMAGES_PATH}/{BOTTOM_RIGHT}/{FACE_RECOGNITION_DIR}/{FACES_NEGATIVE_DIR}") 
-        face_recognition.recognize_yolo(BOTTOM_RIGHT, processed_imgs_path)
+        #face_detection.set_images_directory(f"{PROCESSED_IMAGES_PATH}/{BOTTOM_RIGHT}/{FACE_RECOGNITION_DIR}/{FACES_NEGATIVE_DIR}") 
+        face_detection.detect_yolo(BOTTOM_RIGHT, processed_imgs_path)
 
-        face_recognition.set_images_directory(f"{CROPPED_IMGS_PATH}/{BOTTOM_LEFT}") # agora, processa os do lado esquerdo
+        face_detection.set_images_directory(f"{CROPPED_IMGS_PATH}/{BOTTOM_LEFT}") # agora, processa os do lado esquerdo
         processed_imgs_path = f"{PROCESSED_IMAGES_PATH}/{BOTTOM_LEFT}"
-        face_recognition.recognize(BOTTOM_LEFT, processed_imgs_path)
+        face_detection.detect(BOTTOM_LEFT, processed_imgs_path)
         
-        # face_recognition.set_images_directory(f"{PROCESSED_IMAGES_PATH}/{BOTTOM_LEFT}/{FACE_RECOGNITION_DIR}/{FACES_NEGATIVE_DIR}")
-        face_recognition.recognize_yolo(BOTTOM_LEFT, processed_imgs_path)
+        # face_detection.set_images_directory(f"{PROCESSED_IMAGES_PATH}/{BOTTOM_LEFT}/{FACE_RECOGNITION_DIR}/{FACES_NEGATIVE_DIR}")
+        face_detection.detect_yolo(BOTTOM_LEFT, processed_imgs_path)
 
         time_end = time.time()
         Channel(channel_id).set_processing_time(time_end - time_init)
         
         if os.path.isdir(PROCESSED_IMAGES_PATH):
-            make_archive(PROCESSED_IMAGES_ZIP_PATH + '/processed_' + channel_id, 'zip', PROCESSED_IMAGES_PATH)
+            shutil.make_archive(PROCESSED_IMAGES_ZIP_PATH + '/processed_' + channel_id, 'zip', PROCESSED_IMAGES_PATH)
         
         for files in os.listdir(BASE_PATH):
             path = os.path.join(BASE_PATH, files)
@@ -70,6 +70,6 @@ if __name__ == '__main__':
 
     vid_ids_to_download = VideosResultsDB().get_videos_from_download()
     video_downloader = VideoDownloader(VIDEOS_PATH)
-    video_downloader.download(vid_ids_to_download[4500:5500])
+    video_downloader.download(vid_ids_to_download)
 
-    subtitle_downloader.download(vid_ids_to_download[4500:5500])
+    subtitle_downloader.download(vid_ids_to_download)

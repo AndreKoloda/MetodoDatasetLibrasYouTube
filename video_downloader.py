@@ -1,5 +1,3 @@
-# https://pytube.io/en/latest/
-# pip install pytube
 from pytube import YouTube
 from pytube.exceptions import VideoUnavailable, AgeRestrictedError
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -36,8 +34,5 @@ class VideoDownloader:
 
 
 if __name__ == '__main__':
-    from constants import VIDEOS_PATH
-    ids = ['xcJtL7QggTI', 'LXb3EKWsInQ', 'TfSwG5oO4K8']
-    vd = VideoDownloader(VIDEOS_PATH)
-    vd.download(ids)
+    pass
 
