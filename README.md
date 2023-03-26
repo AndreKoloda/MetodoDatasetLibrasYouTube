@@ -3,4 +3,6 @@ Método para criação de bases de dados de Libras a partir de vídeos do YouTub
 
 `pip install -r requirements.txt`
 
-Configure os parâmetros no arquivo `constants.py`
+É necessário baixar e adicionar o FFmpeg às variáveis de ambiente <<https://ffmpeg.org/download.html>>.
+
+Configure os parâmetros no arquivo `constants.py`.
