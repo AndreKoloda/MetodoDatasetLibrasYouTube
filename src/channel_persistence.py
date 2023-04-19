@@ -11,7 +11,7 @@ logging.basicConfig(filename='app.log',level=logging.ERROR)
 class ChannelDB:
     def __init__(self):
         self.db = MongoDB()
-        self.channel = self.db.connect_collection('channels_teste')
+        self.channel = self.db.connect_collection('channels')
 
     def exception_message(e, message = ''):
         logging.error('\n ---- ' + datetime.datetime.now() + ' ---- MongoDB Persistence exception: ' + message + ' \n' + e)
@@ -142,39 +142,39 @@ class ChannelDB:
             message = 'set_caption_created("' + channel_id + '","' +  video_id + '",' + time + ')'
             self.exception_message(e, message)
 
-    def insert_yolo_recognition_in_video(self, channel_id, video_id, yolo):
+    def insert_yolo_detection_in_video(self, channel_id, video_id, yolo):
         try:
             query = {"channel_id": channel_id, "videos.video_id": video_id, 
-                    "$or": [{"videos.recognition.yolo.index": {"$ne": yolo.index}}, {"videos.recognition.yolo": []}]}
-            update = {"$push": {"videos.$.recognition.yolo": from_dict(yolo)}}
+                    "$or": [{"videos.detection.yolo.index": {"$ne": yolo.index}}, {"videos.detection.yolo": []}]}
+            update = {"$push": {"videos.$.detection.yolo": from_dict(yolo)}}
             self.channel.update_one(query, update)
         except Exception as e:
-            message = 'insert_yolo_recognition_in_video("' + channel_id + '","' +  video_id + '",' + yolo + ')'
+            message = 'insert_yolo_detection_in_video("' + channel_id + '","' +  video_id + '",' + yolo + ')'
             self.exception_message(e, message)
 
     def insert_face_recognition_in_video(self, channel_id, video_id, face_recognition):
         try:
             query = {"channel_id": channel_id, "videos.video_id": video_id,
-                    "$or": [{"videos.recognition.face_recognition.index": {"$ne": face_recognition.index}}, {"videos.recognition.face_recognition": []}]}
-            update = {"$push": {"videos.$.recognition.face_recognition": from_dict(face_recognition)}}
+                    "$or": [{"videos.detection.face_recognition.index": {"$ne": face_recognition.index}}, {"videos.detection.face_recognition": []}]}
+            update = {"$push": {"videos.$.detection.face_recognition": from_dict(face_recognition)}}
             self.channel.update_one(query, update)
         except Exception as e:
             message = 'insert_face_recognition_in_video("' + channel_id + '","' +  video_id + '",' + face_recognition + ')'
             self.exception_message(e, message)
 
-    def _filter_video_recognized(self, video):
+    def _filter_video_detected(self, video):
         try:
-            recognition = video['recognition']
-            face_recognition = recognition['face_recognition']
-            yolo = recognition['yolo']
+            detection = video['detection']
+            face_recognition = detection['face_recognition']
+            yolo = detection['yolo']
                 
-            count_yolo_positive = len(list(filter(lambda x: x['recognized'] == True , yolo)))
-            count_face_positive = len(list(filter(lambda x: x['recognized'] == True , face_recognition)))
+            count_yolo_positive = len(list(filter(lambda x: x['detected'] == True , yolo)))
+            count_face_positive = len(list(filter(lambda x: x['detected'] == True , face_recognition)))
                 
             if (count_face_positive > 0) or (count_yolo_positive > 0):
                 self.video_id_download.append(video['video_id'])
         except Exception as e:
-            message = '_filter_video_recognized(' + video + ')'
+            message = '_filter_video_detected(' + video + ')'
             self.exception_message(e, message)
 
     def _filter_video_contains_caption(self, video):
@@ -219,7 +219,7 @@ class ChannelDB:
                 videos = list(item)
                 
             with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-                tasks = {executor.submit(self._filter_video_recognized, item): item for item in videos}
+                tasks = {executor.submit(self._filter_video_detected, item): item for item in videos}
                 for task in as_completed(tasks):
                     print(task)
 
@@ -254,12 +254,12 @@ class ChannelDB:
             if (video['caption_generated'] == True or video['caption_created'] == True):
                 self.channel_statistic.video_with_caption += 1
 
-            recognition = video['recognition']
-            face_recognition = recognition['face_recognition']
-            yolo = recognition['yolo']
+            detection = video['detection']
+            face_recognition = detection['face_recognition']
+            yolo = detection['yolo']
                 
-            yolo_positive = list(filter(lambda x: x['recognized'] == True , yolo))
-            face_positive = list(filter(lambda x: x['recognized'] == True , face_recognition))
+            yolo_positive = list(filter(lambda x: x['detected'] == True , yolo))
+            face_positive = list(filter(lambda x: x['detected'] == True , face_recognition))
 
             count_left_yolo_positive = len(list(filter(lambda x: x['bottom_side'] == "bottom_left" , yolo_positive)))
             count_right_yolo_positive = len(list(filter(lambda x: x['bottom_side'] == "bottom_right" , yolo_positive)))
@@ -277,19 +277,19 @@ class ChannelDB:
                 
 
             if (count_left_yolo_positive > 0) or (count_left_face_positive > 0):
-                self.channel_statistic.recognized_left += 1
+                self.channel_statistic.detected_left += 1
                 self.channel_statistic.sum_time_video_L += video["duration"]
 
             if (count_right_yolo_positive > 0) or (count_right_face_positive > 0):
-                self.channel_statistic.recognized_right += 1
+                self.channel_statistic.detected_right += 1
                 self.channel_statistic.sum_time_video_R += video["duration"]
 
             if (len(yolo_positive) > 0 or len(face_positive) > 0):
-                self.channel_statistic.video_recognized_count += 1
-                self.channel_statistic.sum_time_video_recognized += video["duration"]
+                self.channel_statistic.video_detected_count += 1
+                self.channel_statistic.sum_time_video_detected += video["duration"]
             
         except Exception as e:
-            message = '_filter_video_recognized(' + video + ')'
+            message = '_filter_video_detected(' + video + ')'
             self.exception_message(e, message)
 
     def get_channel_statistic(self, channel_id):
@@ -312,14 +312,14 @@ class ChannelDB:
             self.exception_message(e, message)
 
 
-    def _get_all_videos_recognized(self, video):
+    def _get_all_videos_detected(self, video):
         try:
-            recognition = video['recognition']
-            face_recognition = recognition['face_recognition']
-            yolo = recognition['yolo']
+            detection = video['detection']
+            face_recognition = detection['face_recognition']
+            yolo = detection['yolo']
                 
-            yolo_positive = list(filter(lambda x: x['recognized'] == True , yolo))
-            face_positive = list(filter(lambda x: x['recognized'] == True , face_recognition))
+            yolo_positive = list(filter(lambda x: x['detected'] == True , yolo))
+            face_positive = list(filter(lambda x: x['detected'] == True , face_recognition))
 
             # count_left_yolo_positive = len(list(filter(lambda x: x['bottom_side'] == "bottom_left" , yolo_positive)))
             count_right_yolo_positive = len(list(filter(lambda x: x['bottom_side'] == "bottom_right" , yolo_positive)))
@@ -331,10 +331,10 @@ class ChannelDB:
                 self.videos_id_download.append(video['video_id'])
 
         except Exception as e:
-            message = '_filter_video_recognized(' + video + ')'
+            message = '_filter_video_detected(' + video + ')'
             self.exception_message(e, message)
 
-    def get_all_videos_recognized(self):
+    def get_all_videos_detected(self):
         try:
             self.videos_id_download = []
             channel_ids = self.get_channels_ids()
@@ -347,7 +347,7 @@ class ChannelDB:
                     videos = list(item)
                     
                 with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-                    tasks = {executor.submit(self._get_all_videos_recognized, item): item for item in videos}
+                    tasks = {executor.submit(self._get_all_videos_detected, item): item for item in videos}
                     for task in as_completed(tasks):
                         print(task)
 
@@ -361,15 +361,15 @@ class ChannelDB:
 class ChannelStatistic():
     def __init__(self) -> None:
         self.video_count = 0
-        self.video_recognized_count = 0
+        self.video_detected_count = 0
         self.video_with_caption = 0
         self.yolo_L = 0
         self.yolo_R = 0
         self.face_L = 0
         self.face_R = 0
-        self.recognized_left = 0
-        self.recognized_right = 0
+        self.detected_left = 0
+        self.detected_right = 0
         self.sum_time_video_L = 0
         self.sum_time_video_R = 0
-        self.sum_time_video_recognized = 0
+        self.sum_time_video_detected = 0
 

@@ -6,7 +6,7 @@ from json_converter import from_dict
 
 class VideosResultsDB:
     def __init__(self) -> None:
-        self.collection = MongoDB().connect_collection('videos_download')
+        self.collection = MongoDB().connect_collection('videos')
 
     def _add_video_affirmative(self, id):
          self.collection.insert_one({'video_id': id})

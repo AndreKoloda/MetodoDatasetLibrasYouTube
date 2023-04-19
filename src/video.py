@@ -1,4 +1,4 @@
-from src.recognition import RecognitionInterpreter
+from src.detection import DetectionInterpreter
 
 class Video:
     def __init__(self, video_id):
@@ -6,7 +6,7 @@ class Video:
         self.caption_generated = False
         self.caption_created = False
         self.duration = 0
-        self.recognition = RecognitionInterpreter()
+        self.detection = DetectionInterpreter()
 
     def set_caption_generated(self, caption_generated):
         self.caption_generated = caption_generated
@@ -17,6 +17,6 @@ class Video:
     def set_duration(self, duration):
         self.duration = duration
 
-    def add_recognition_results(self, recognition):
-        self.recognition = recognition
+    def add_detection_results(self, detection):
+        self.detection = detection
         

@@ -68,14 +68,6 @@ class Channel:
         else:
             print("Não existem videos no canal")
 
-    def get_video_by_id(self, video_id):
-        channel = ChannelDB()
-        return channel.get_video_by_id(self.channel_id, video_id)
-
-    def get_all_videos(self):
-        channel = ChannelDB()
-        return channel.get_all_video(self.channel_id)
-    
     def get_videos_ids(self):
         channel = ChannelDB()
         return channel.get_videos_ids(self.channel_id)
@@ -92,8 +84,8 @@ class Channel:
         channel_db = ChannelDB()
         channel_db.set_duration_video(self.channel_id, video_id, time)
 
-    def insert_yolo_recognition_in_video(self, video_id, yolo):
-        ChannelDB().insert_yolo_recognition_in_video(self.channel_id, video_id, yolo)
+    def insert_yolo_detection_in_video(self, video_id, yolo):
+        ChannelDB().insert_yolo_detection_in_video(self.channel_id, video_id, yolo)
 
     def insert_face_recognition_in_video(self, video_id, face_recognition):
         ChannelDB().insert_face_recognition_in_video(self.channel_id, video_id, face_recognition)

@@ -1,9 +1,9 @@
 import os
-import face_recognition as fr
+import detection as fr
 import glob
 from yolo import YoloFace
 from channel import Channel
-from src.recognition import Yolo as YoloObj, FaceRecognition as FaceObj
+from src.detection import Yolo as YoloObj, FaceRecognition as FaceObj
 from image_cropping import Image
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path 
@@ -95,7 +95,7 @@ class FaceDetection:
 
         if yolo:
             yolo_obj = YoloObj(bottom_side, frame, detected)
-            Channel(self.channel_id).insert_yolo_recognition_in_video(split_filename[ID], yolo_obj)
+            Channel(self.channel_id).insert_yolo_detection_in_video(split_filename[ID], yolo_obj)
         else:
             face_obj = FaceObj(bottom_side, frame, detected)
             Channel(self.channel_id).insert_face_recognition_in_video(split_filename[ID], face_obj)
