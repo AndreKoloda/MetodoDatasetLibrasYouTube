@@ -16,9 +16,9 @@ class DetectionInterpreter:
         self.yolo = []
 
     def add_face_recognition(self, index, recognized):
-        recognition_face =  FaceRecognition(index= index, recognized= recognized)
-        self.face_recognition.append(recognition_face)
+        detection_face =  FaceRecognition(index= index, recognized= recognized)
+        self.face_recognition.append(detection_face)
 
     def add_yolo_recognition(self, index, recognized):
-        recognition_yolo =  Yolo(index= index, recognized= recognized)
-        self.yolo.append(recognition_yolo)
+        detection_yolo =  Yolo(index= index, recognized= recognized)
+        self.yolo.append(detection_yolo)
