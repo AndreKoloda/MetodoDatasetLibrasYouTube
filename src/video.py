@@ -1,4 +1,4 @@
-from src.detection import DetectionInterpreter
+from detection import DetectionInterpreter
 
 class Video:
     def __init__(self, video_id):

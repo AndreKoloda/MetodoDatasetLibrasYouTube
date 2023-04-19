@@ -1,9 +1,9 @@
 import os
-import detection as fr
+import face_recognition as fr
 import glob
 from yolo import YoloFace
 from channel import Channel
-from src.detection import Yolo as YoloObj, FaceRecognition as FaceObj
+from detection import Yolo as YoloObj, FaceRecognition as FaceObj
 from image_cropping import Image
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path 
