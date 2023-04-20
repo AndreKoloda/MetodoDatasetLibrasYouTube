@@ -8,7 +8,6 @@ from face_detection import FaceDetection
 from video_id_generator import get_video_ids
 from image_cropping import CroppingGenerator
 from txt_reader import read_archive_with_link_channels
-from shutil import make_archive
 from constants import *
 import time
 import os

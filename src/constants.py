@@ -1,7 +1,4 @@
-CHANNEL_URL_LIST = []
-
 ARCHIVE_TXT_URL_FILES_DIR = ""
-
 INPUT_URL_TXT = "urls_input"
 
 BASE_PATH = "/home/kolodadev/Estudos/project_files"
